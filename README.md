@@ -45,15 +45,6 @@ Repository layout
 	- `spi_master_tb.sv`
 - `Results/` — waveform screenshots and console images that show expected outputs (small images are fine; large files should be kept out or added as a release asset).
 
-Keep other large or Vivado-specific files (project work directories, simulation caches) off the repo. Add a `.gitignore` with entries like:
-
-- `*.wdb`
-- `*.xsim`
-- `*.log`
-- `PBL_NEW.cache/`
-- `PBL_NEW.sim/`
-- `*.pb`
-
 If later you want to include helper scripts or documentation, add them under `tools/` or `docs/`.
 
 Prerequisites
