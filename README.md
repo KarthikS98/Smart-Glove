@@ -1,108 +1,133 @@
-# SD Card SPI — SystemVerilog Verification
+# Smart Glove - Sign Language to Speech Converter
 
-A SystemVerilog verification project that models an SPI master and a behavioral SD card to simulate and validate SD card initialization and read/write sequences (CMD0, CMD8, CMD17, CMD24) without hardware. Includes testbenches and simulation scripts to reproduce console outputs and waveforms demonstrating correct command-response and data transfer.
+A wearable smart glove that converts sign language gestures into speech and text, while also providing device control capabilities. This project was developed as part of my 3rd semester coursework.
 
-Table of contents
-- Project overview
-- Features
-- Repository layout
-- Prerequisites
-- Quick start (Vivado / simulation)
-- Expected output
-- Contributing
-- License
+## Features
 
-Project overview
----------------
+- Converts sign language gestures to audio output
+- Displays corresponding text on LCD screen
+- Dual-mode functionality:
+  - Mode 1: Sign Language to Speech conversion
+  - Mode 2: Device control through relay switches
+- Uses flex sensors to detect finger movements
+- Supports multiple gesture combinations:
+  - Single finger gestures
+  - Two finger combinations
+  - Three finger combinations
+  - Four finger combinations
 
-This project provides a reusable verification environment for an SD card interface implemented over SPI. It contains:
+## Hardware Components
 
-- An SPI Master module (drives SCLK, MOSI, CS) that transmits 48-bit SD commands and receives responses over MISO.
-- A behavioral SD Card model that decodes commands, returns R1/R3/R7 responses, serves data tokens and data blocks, and accepts write transactions.
-- Testbenches to validate read (CMD17) and write (CMD24) flows, plus SPI master loopback and slave-response tests.
-- Simulation scripts and helper tools to run and inspect waveforms and console output.
+- STM32 Microcontroller
+- Flex Sensors (4-5 sensors)
+- DFPlayer Mini MP3 Player
+- LCD Display
+- Relay Module (2 channels)
+- Speaker
+- Power Supply
 
-This environment lets you verify initialization and data transfer sequences (CMD0, CMD8, CMD17, CMD24) entirely in simulation.
+## Pin Configuration
 
-Features
---------
+### Flex Sensors
+- Thumb: PA0
+- Index: PA1
+- Middle: PA2
+- Ring: PA3
 
-- SPI master FSM: IDLE → TRANSFER → DONE; 48-bit transfers; MOSI on falling edge, MISO sampled on rising edge.
-- Behavioral SD card supporting core commands (CMD0, CMD8, CMD17, CMD24, CMD55, ACMD41, CMD58).
-- Testbenches with clear console logging to demonstrate command/response sequences and read/write verification.
-- Simulation helper scripts and Vivado-friendly project structure (files from Vivado project included in the `PBL_NEW` folder).
+### DFPlayer Mini
+- RX: PA10
+- TX: PA9
 
+### LCD Display
+- RS: PB3
+- EN: PB4
+- D4: PB5
+- D5: PB6
+- D6: PB7
+- D7: PB8
 
-Repository layout
------------------
+### Relay Control
+- Channel 1: PB0
+- Channel 2: PB1
 
--You said you'll upload only these items to GitHub:
+## Setup and Installation
 
-- `RTL_codes/` — a folder containing the four SystemVerilog files:
-	- `sd_card.sv`
-	- `sd_card_tb.sv`
-	- `spi_master.sv`
-	- `spi_master_tb.sv`
-- `Results/` — waveform screenshots and console images that show expected outputs (small images are fine; large files should be kept out or added as a release asset).
+1. Connect the hardware components according to the pin configuration
+2. Upload the audio files to DFPlayer Mini's SD card
+3. Upload the code to STM32 microcontroller
+4. Power up the system
 
-If later you want to include helper scripts or documentation, add them under `tools/` or `docs/`.
+## STM32 BluePill Setup
 
-Prerequisites
--------------
+### Programming Method
+This project uses the STM32duino bootloader method to program the STM32 BluePill using Arduino IDE. 
 
-- Xilinx Vivado 2020.2 or later (for GUI simulation and project import)
-- A SystemVerilog-capable simulator (Vivado XSIM is used by the provided project files)
-- Git (for repository management)
+### Arduino IDE Setup
+1. Add STM32 board support:
+   - Open Arduino IDE
+   - Go to File > Preferences
+   - Add this URL to Additional Boards Manager URLs:
+     `https://github.com/stm32duino/BoardManagerFiles/raw/master/STM32/package_stm_index.json`
+   - Go to Tools > Board > Boards Manager
+   - Search for "STM32" and install "STM32 MCU based boards"
 
+2. Board Settings:
+   - Board: "Generic STM32F103C series"
+   - Board part number: "BluePill F103C8"
+   - Upload Method: "STM32duino bootloader"
+   - Port: Select the COM port where your STM32 is connected
 
-Quick start — run simulations
---------------------------------
+### Required Libraries
+- DFPlayer Mini library
+- LiquidCrystal library
+- STM32duino libraries (automatically installed with board support)
 
-Because you'll upload the four SV files inside `RTL_codes/`, here's the minimal flow to simulate them in Vivado or any SystemVerilog-capable simulator:
+### Hardware Setup for Programming
+1. Connect STM32 BluePill to USB-to-Serial converter:
+   - BOOT0 pin: Set to 1 (3.3V) for programming
+   - BOOT1 pin: Set to 0 (GND)
+   - Connect:
+     - USB-to-Serial GND → STM32 GND
+     - USB-to-Serial RX → STM32 A9 (TX)
+     - USB-to-Serial TX → STM32 A10 (RX)
+     - USB-to-Serial 3.3V → STM32 3.3V
 
-1. Open Vivado and create a new project (empty project).
-2. Add the four files from your uploaded `RTL_codes/` folder as sources and simulation sources:
-	- Add `RTL_codes/sd_card.sv` and `RTL_codes/spi_master.sv` as design sources.
-	- Add `RTL_codes/sd_card_tb.sv` and `RTL_codes/spi_master_tb.sv` as simulation sources.
-3. For SD card verification, set `sd_card_tb.sv` as the top-level simulation file and run simulation (set stop time ≈ 1000 ns).
-4. For SPI master unit tests, set `spi_master_tb.sv` as top-level and run its simulation.
+2. After programming:
+   - Set BOOT0 back to 0 (GND) for normal operation
 
+## Usage
 
+### Mode 1: Sign Language Mode
+- Single finger gestures trigger basic phrases
+- Multiple finger combinations produce complex sentences
+- LCD displays the corresponding text
+- Audio output plays through the speaker
 
-Uploading only these files to GitHub (web UI)
--------------------------------------------
+### Mode 2: Device Control
+- Use thumb to control Relay Channel 1 (ON/OFF)
+- Use index finger to control Relay Channel 2 (ON/OFF)
 
-1. Create a new repository on github.com (name + description + visibility).
-2. On the new repo page click Add file → Upload files.
-3. Drag the local `RTL_codes/` folder (containing the four `.sv` files) and the `Results/` folder into the upload area.
-4. Commit the upload with message "Initial import: source files + results".
+### Mode Switching
+- Bend all fingers simultaneously to switch between modes
+- LCD displays current mode
+- Audio confirmation plays during mode switch
 
+## Future Improvements
 
-Notes and common clarifications
---------------------------------
+- Add more gesture combinations
+- Implement machine learning for better gesture recognition
+- Add wireless connectivity
+- Develop mobile app integration
+- Expand device control capabilities
 
-- CRC handling: Some testbenches use fixed CRC bytes for known commands in simulation. If you need full CRC7/CRC16 checking, add or enable CRC calculation in `crc` helpers.
-- SD memory model: The behavioral SD card stores blocks in-memory for simulation. If persistence or a larger memory is required, modify the model accordingly.
+## License
 
-Contributing
-------------
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-If you want to improve the project:
+## Author
 
-- Open an issue describing the change or bug.
-- Submit a pull request with a short description and tests (if applicable).
+Karthik S
 
-License
--------
+## Acknowledgments
 
-This repository is released under the MIT License — include a `LICENSE` file at the project root.
-
-Authors
--------
-
-Karthik S and team (project developed as part of EC362AI — SystemVerilog for Design & Verification).
-
-Contact
--------
-
-For questions and contributions open an issue or contact the authors via the repository profile.
+- RV College of Engineering, Bangalore
