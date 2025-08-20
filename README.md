@@ -36,9 +36,9 @@ Features
 Repository layout
 -----------------
 
-You said you'll upload only these items to GitHub:
+-You said you'll upload only these items to GitHub:
 
-- `New/` — a folder containing the four SystemVerilog files:
+- `RTL_codes/` — a folder containing the four SystemVerilog files:
 	- `sd_card.sv`
 	- `sd_card_tb.sv`
 	- `spi_master.sv`
@@ -67,14 +67,14 @@ Prerequisites
 Quick start — run simulations
 --------------------------------
 
-Because you'll upload the four SV files inside `New/`, here's the minimal flow to simulate them in Vivado or any SystemVerilog-capable simulator:
+Because you'll upload the four SV files inside `RTL_codes/`, here's the minimal flow to simulate them in Vivado or any SystemVerilog-capable simulator:
 
 Option A — Vivado GUI
 
 1. Open Vivado and create a new project (empty project).
-2. Add the four files from your uploaded `New/` folder as sources and simulation sources:
-	- Add `New/sd_card.sv` and `New/spi_master.sv` as design sources.
-	- Add `New/sd_card_tb.sv` and `New/spi_master_tb.sv` as simulation sources.
+2. Add the four files from your uploaded `RTL_codes/` folder as sources and simulation sources:
+	- Add `RTL_codes/sd_card.sv` and `RTL_codes/spi_master.sv` as design sources.
+	- Add `RTL_codes/sd_card_tb.sv` and `RTL_codes/spi_master_tb.sv` as simulation sources.
 3. For SD card verification, set `sd_card_tb.sv` as the top-level simulation file and run simulation (set stop time ≈ 1000 ns).
 4. For SPI master unit tests, set `spi_master_tb.sv` as top-level and run its simulation.
 
@@ -92,7 +92,7 @@ Uploading only these files to GitHub (web UI)
 
 1. Create a new repository on github.com (name + description + visibility).
 2. On the new repo page click Add file → Upload files.
-3. Drag the local `New/` folder (containing the four `.sv` files) and the `Results/` folder into the upload area.
+3. Drag the local `RTL_codes/` folder (containing the four `.sv` files) and the `Results/` folder into the upload area.
 4. Commit the upload with message "Initial import: source files + results".
 
 Notes
