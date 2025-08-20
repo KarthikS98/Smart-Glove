@@ -60,8 +60,6 @@ Quick start — run simulations
 
 Because you'll upload the four SV files inside `RTL_codes/`, here's the minimal flow to simulate them in Vivado or any SystemVerilog-capable simulator:
 
-Option A — Vivado GUI
-
 1. Open Vivado and create a new project (empty project).
 2. Add the four files from your uploaded `RTL_codes/` folder as sources and simulation sources:
 	- Add `RTL_codes/sd_card.sv` and `RTL_codes/spi_master.sv` as design sources.
@@ -69,14 +67,7 @@ Option A — Vivado GUI
 3. For SD card verification, set `sd_card_tb.sv` as the top-level simulation file and run simulation (set stop time ≈ 1000 ns).
 4. For SPI master unit tests, set `spi_master_tb.sv` as top-level and run its simulation.
 
-Option B — command-line simulator (xsim / other)
 
-If you use Vivado's xsim, you can compile and run the testbench from a TCL script or batch file. Example sequence (use Vivado TCL shell or a supplied script):
-
-1. Compile design and TB files.
-2. Elaborate and run simulation for `sd_card_tb` for ~1000 ns.
-
-If you want, I can draft a small `run_sim.sh`/`run_sim.tcl` or Windows `run_sim.bat` that compiles and runs the TB with xsim — tell me which simulator you prefer.
 
 Uploading only these files to GitHub (web UI)
 -------------------------------------------
@@ -86,55 +77,12 @@ Uploading only these files to GitHub (web UI)
 3. Drag the local `RTL_codes/` folder (containing the four `.sv` files) and the `Results/` folder into the upload area.
 4. Commit the upload with message "Initial import: source files + results".
 
-Notes
------
-
-- If `Results/` contains many or very large images, consider zipping them or uploading them as a release asset instead of keeping them in the repo to save space.
-- If you plan to add Vivado project files later, add them in a separate `PBL_NEW/` folder and ignore intermediate build folders with `.gitignore`.
-
-Expected output
----------------
-
-Console/log samples you should see from the SD card testbench (trimmed):
-
-=== WRITE VERIFICATION SEQUENCE ===
-Step 1: Reading original data...
-CMD sent: 5100000000ff
-R1 response: 000000000000
-Token: 0000000000fe
-Data block: deadbeef1234
-...
-Step 2: Writing new data...
-CMD sent: 5800000000ff
-Response received: 000000000000
-Data token: 0000000000fe
-Data block: cafebabe5678
-Write response: 000000000005
-...
-Step 3: Reading data after write...
-Data block: cafebabe5678
-=== WRITE VERIFICATION COMPLETE ===
-
-SPI master testbench sample outputs:
-
-=== TEST 1: SPI Loopback ===
-Transfer complete:
-Data sent: 400000000095
-Data received: 400000000095
-SUCCESS: Loopback working correctly!
-
-=== TEST 2: Slave Response ===
-Transfer complete:
-Data sent: 5100000000FF
-Data received: 123456789ABC
-SUCCESS: Slave response working correctly!
 
 Notes and common clarifications
 --------------------------------
 
 - CRC handling: Some testbenches use fixed CRC bytes for known commands in simulation. If you need full CRC7/CRC16 checking, add or enable CRC calculation in `crc` helpers.
 - SD memory model: The behavioral SD card stores blocks in-memory for simulation. If persistence or a larger memory is required, modify the model accordingly.
-- Simulator logs/waveforms: save large waveform files outside the repo or add them to `.gitignore`.
 
 Contributing
 ------------
@@ -142,7 +90,6 @@ Contributing
 If you want to improve the project:
 
 - Open an issue describing the change or bug.
-- Create a feature branch: `git checkout -b feat/crc-improvements`.
 - Submit a pull request with a short description and tests (if applicable).
 
 License
